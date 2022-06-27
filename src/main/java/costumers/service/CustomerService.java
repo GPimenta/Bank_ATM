@@ -54,5 +54,6 @@ public class CustomerService implements ICustomerService{
     @Override
     public Collection<Customer> getAllCustomer() throws CustomerNotFoundException {
         return repository.getAll();
+
     }
 }
