@@ -57,7 +57,7 @@ public class AccountService implements IAccountService {
     @Override
     public Account findAccountByHolderCustomerId(Integer customerId) throws AccountNotFoundException {
 
-        return repository.findByHolderCustomerId(customerId).orElseThrow(() -> new AccountNotFoundException("Account not found with customer Id: %d ", customerId));
+        return repository.findByHolderCustomerId(customerId).orElseThrow(() -> new AccountNotFoundException("Account not found with customer Id: %d", customerId));
     }
 
     @Override
