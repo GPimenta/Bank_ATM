@@ -76,7 +76,7 @@ public class AccountService implements IAccountService {
     @Override
     public void depositAccount(Integer accountId, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidDepositException {
         if (amount <= 0) {
-            throw new AccountVoidDepositException("Cannot deposit with '%.2f", amount);
+            throw new AccountVoidDepositException("Cannot deposit with %.2f", amount);
         }
         Account account = getAccount(accountId);
         account.setBalance(account.getBalance() + amount);

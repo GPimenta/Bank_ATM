@@ -1,7 +1,6 @@
 package accounts.service;
 
-import accounts.exceptions.AccountConflictException;
-import accounts.exceptions.AccountNotFoundException;
+import accounts.exceptions.*;
 import accounts.model.Account;
 import accounts.repository.IAccountRepository;
 import accounts.repository.InMemAccountRepository;
@@ -109,22 +108,73 @@ class AccountServiceTest {
     }
 
     @Test
-    void depositAccount() {
+    void depositAccount() throws AccountConflictException, AccountVoidDepositException, AccountNotFoundException {
+        Account account1 = serviceAccount.createAccount(1);
+        serviceAccount.depositAccount(1,300.0);
+
+        assertEquals(300.0 , account1.getBalance());
+
     }
 
     @Test
-    void withdrawAccount() {
+    void depositAccountThrowException() throws AccountConflictException, AccountVoidDepositException, AccountNotFoundException {
+        Account account1 = serviceAccount.createAccount(1);
+
+        AccountVoidDepositException thrown = assertThrows(AccountVoidDepositException.class, () ->serviceAccount.depositAccount(1, 0.0), "TESTING");
+
+        assertEquals("Cannot deposit with 0.00", thrown.getMessage());
+
+
+    }
+
+    // Necessary to make tests for the throws
+    @Test
+    void withdrawAccount() throws AccountConflictException, AccountVoidDepositException, AccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException {
+        Account account1 = serviceAccount.createAccount(1);
+
+        serviceAccount.depositAccount(1, 200.0);
+        serviceAccount.withdrawAccount(1,100.0);
+
+        assertEquals(100.0, account1.getBalance());
+
     }
 
     @Test
-    void transferMoney() {
+    void transferMoney() throws AccountConflictException, AccountNoFundsException, AccountVoidWithdrawException, AccountVoidDepositException, AccountNotFoundException {
+        Account account1 = serviceAccount.createAccount(1);
+        Account account2 = serviceAccount.createAccount(2);
+
+        serviceAccount.depositAccount(1,200.0);
+
+        serviceAccount.transferMoney(1,2, 100.0);
+
+        assertEquals(100, account2.getBalance());
     }
 
     @Test
-    void addSecondaryOwner() {
+    void addSecondaryOwner() throws AccountConflictException, AccountNotFoundException {
+        Account account1 = serviceAccount.createAccount(1);
+
+        serviceAccount.addSecondaryOwner(1,2);
+        serviceAccount.addSecondaryOwner(1,3);
+        serviceAccount.addSecondaryOwner(1,4);
+
+        assertEquals(List.of(2, 3, 4), account1.getSecondaryOwnersId());
+
+
     }
 
     @Test
-    void deleteSecondaryOwner() {
+    void deleteSecondaryOwner() throws AccountConflictException, AccountNotFoundException {
+        Account account1 = serviceAccount.createAccount(1);
+
+        serviceAccount.addSecondaryOwner(1,2);
+        serviceAccount.addSecondaryOwner(1,3);
+        serviceAccount.addSecondaryOwner(1,4);
+
+        serviceAccount.deleteSecondaryOwner(1,3);
+
+        assertEquals(List.of(2, 4), account1.getSecondaryOwnersId());
+
     }
 }
