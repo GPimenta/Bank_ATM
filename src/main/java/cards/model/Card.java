@@ -5,7 +5,13 @@ import utils.IPreconditions;
 
 import java.util.Objects;
 
+
 public class Card implements IdentificationItem {
+
+    public static final int CARD_NUMBER_LENGTH = 5;
+    public static final int PIN_NUMBER_LENGTH = 4;
+
+
     private Integer id;
     private final Integer customerId;
     private final Integer accountId;
@@ -18,8 +24,8 @@ public class Card implements IdentificationItem {
         this.id = id;
         this.customerId = customerId;
         this.accountId = accountId;
-        this.cardNumber = IPreconditions.checkLength(cardNumber, 5, "Card number must have 5 digits");
-        this.pin = IPreconditions.checkLength(pin, 4, "Card Pin must have 4 digits");
+        this.cardNumber = IPreconditions.checkLength(cardNumber, CARD_NUMBER_LENGTH, "Card number must have 5 digits");
+        this.pin = IPreconditions.checkLength(pin, PIN_NUMBER_LENGTH, "Card Pin must have 4 digits");
         this.used = used;
         this.isCreditCard = isCreditCard;
     }

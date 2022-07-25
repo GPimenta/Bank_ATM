@@ -1,9 +1,11 @@
 package cards.service;
 
+import cards.exceptions.CardConflictException;
 import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
 import cards.repository.ICardRepository;
+import utils.INumbersGenerator;
 import utils.IPreconditions;
 
 import java.util.Collection;
@@ -16,14 +18,38 @@ public class CardService implements ICardService {
         this.repository = IPreconditions.checkNotNull(repository,"Card repository cannot be null");
     }
 
-    @Override
-    public DebitCard createDebitCard(Integer accountId, Integer customerId) {
-        return null;
+    private static String generateCardNumber(){
+        return INumbersGenerator.createString(Card.CARD_NUMBER_LENGTH);
+    }
+
+    private static String generatePinNumber(){
+        return  INumbersGenerator.createString(Card.PIN_NUMBER_LENGTH);
     }
 
     @Override
-    public CreditCard createCreditCard(Integer accountId, Integer customerId) {
-        return null;
+    public DebitCard createDebitCard(Integer accountId, Integer customerId) throws CardConflictException {
+        DebitCard debitCard = new DebitCard.Builder()
+                .isUsed(false)
+                .withAccountId(accountId)
+                .withCustomerId(customerId)
+                .withCardNumber(generateCardNumber())
+                .withPin(generatePinNumber())
+                .build();
+        return (DebitCard) repository.create(debitCard).orElseThrow(() -> new CardConflictException("Conflict" +
+                " on creating DebitCard with customer Id: '%i'", customerId));
+    }
+
+    @Override
+    public CreditCard createCreditCard(Integer accountId, Integer customerId) throws CardConflictException {
+        CreditCard creditCard = new CreditCard.Builder()
+                .isUsed(false)
+                .withAccountId(accountId)
+                .withCustomerId(customerId)
+                .withCardNumber(generateCardNumber())
+                .withPin(generatePinNumber())
+                .build();
+        return (CreditCard) repository.create(creditCard).orElseThrow(() -> new CardConflictException("Conflict" +
+                " on creating DebitCard with customer Id: '%i'", customerId));
     }
 
     @Override
