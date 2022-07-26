@@ -1,6 +1,7 @@
 package cards.service;
 
 import cards.exceptions.CardConflictException;
+import cards.exceptions.CardNotFoundException;
 import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
@@ -53,18 +54,25 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public void deleteCard(Integer cardId) {
+    public void deleteCard(Integer cardId) throws CardNotFoundException {
+        if(!repository.deleteById(cardId)) {
+            throw new CardNotFoundException("Card with Id %d not found to delete", cardId);
+        }
 
     }
 
     @Override
-    public boolean checkCardNumberAndPassword(String cardNumber, String password) {
+    public boolean checkCardNumberAndPassword(String cardNumber, String pin) {
+        if (repository.findByCardNumber(cardNumber).isPresent() &&
+                repository.findByCardNumber(cardNumber).get().getPin().equals(pin)) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public Collection<Card> findAllCardsByCustomerId(Integer customerId) {
-        return null;
+        return repository.findByCustomerId(customerId);
     }
 
     @Override

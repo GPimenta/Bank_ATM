@@ -56,18 +56,18 @@ public class InMemCardRepositoryImpl extends InMemRepository<Card> implements IC
     }
 
     @Override
-    public Optional<CreditCard> getCreditCardByCustomerId(int id){
+    public Optional<CreditCard> getCreditCardByCustomerId(int customerId){
         return getAll().stream()
-                .filter(card -> card.getId() == id)
+                .filter(card -> card.getId() == customerId)
                 .filter(card -> card instanceof CreditCard)
                 .map(card -> (CreditCard) card)
                 .findFirst();
     }
 
     @Override
-    public Optional<DebitCard> getDebitCardByCustomerId(int id){
+    public Optional<DebitCard> getDebitCardByCustomerId(int customerId){
         return getAll().stream()
-                .filter(card -> card.getId() == id)
+                .filter(card -> card.getId() == customerId)
                 .filter(card -> card instanceof DebitCard)
                 .map(card -> (DebitCard) card)
                 .findFirst();

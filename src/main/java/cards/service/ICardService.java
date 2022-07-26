@@ -1,6 +1,7 @@
 package cards.service;
 
 import cards.exceptions.CardConflictException;
+import cards.exceptions.CardNotFoundException;
 import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
@@ -13,9 +14,9 @@ public interface ICardService {
 
     CreditCard createCreditCard(Integer accountId, Integer customerId) throws CardConflictException;
 
-    void deleteCard(Integer cardId);
+    void deleteCard(Integer cardId) throws CardNotFoundException;
 
-    boolean checkCardNumberAndPassword(String cardNumber, String password);
+    boolean checkCardNumberAndPassword(String cardNumber, String pin);
 
     Collection<Card> findAllCardsByCustomerId(Integer customerId);
 
