@@ -24,9 +24,13 @@ public interface ICardService {
 
     DebitCard getDebitCardByCardId(String cardId);
 
+    DebitCard getDebitCardByCustomerId(Integer customerId);
+
     CreditCard getCreditCardByCardId(String cardId);
 
-    Card getCardById(Integer cardId);
+    CreditCard getCreditCardByCustomerId(Integer customerId);
+
+    Card getCardById(String cardId);
 
 
 }

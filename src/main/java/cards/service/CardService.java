@@ -48,6 +48,7 @@ public class CardService implements ICardService {
                 .withCustomerId(customerId)
                 .withCardNumber(generateCardNumber())
                 .withPin(generatePinNumber())
+                .withCashAdvance(250)
                 .build();
         return (CreditCard) repository.create(creditCard).orElseThrow(() -> new CardConflictException("Conflict" +
                 " on creating DebitCard with customer Id: '%i'", customerId));
@@ -82,16 +83,25 @@ public class CardService implements ICardService {
 
     @Override
     public DebitCard getDebitCardByCardId(String cardId) {
-        return null;
+        return (DebitCard) repository.findByCardNumber(cardId).get();
+    }
+
+    @Override
+    public DebitCard getDebitCardByCustomerId(Integer customerId) {
+        return repository.getDebitCardByCustomerId(customerId).get();
     }
 
     @Override
     public CreditCard getCreditCardByCardId(String cardId) {
-        return null;
+        return (CreditCard) repository.findByCardNumber(cardId).get();
     }
 
     @Override
-    public Card getCardById(Integer cardId) {
-        return null;
+    public CreditCard getCreditCardByCustomerId(Integer customerId) {
+        return repository.getCreditCardByCustomerId(customerId).get();
     }
+
+    @Override
+    public Card getCardById(String cardId) {
+        return repository.findByCardNumber(cardId).get();    }
 }
