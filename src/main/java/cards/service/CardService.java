@@ -10,6 +10,7 @@ import utils.INumbersGenerator;
 import utils.IPreconditions;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class CardService implements ICardService {
 
@@ -78,12 +79,16 @@ public class CardService implements ICardService {
 
     @Override
     public Collection<DebitCard> findAllDebitCardsByCustomerId(Integer customerId) {
-        return null;
+        return repository.getAllDebitCardByCustomerId(customerId);
+    }
+
+    public Collection<CreditCard> findAllCreditCardsByCustomerId(Integer customerId) {
+        return repository.getAllCreditCardByCustomerId(customerId);
     }
 
     @Override
-    public DebitCard getDebitCardByCardId(String cardId) {
-        return (DebitCard) repository.findByCardNumber(cardId).get();
+    public DebitCard getDebitCardByCardNumber(String cardNumber) {
+        return (DebitCard) repository.findByCardNumber(cardNumber).get();
     }
 
     @Override
@@ -92,8 +97,8 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public CreditCard getCreditCardByCardId(String cardId) {
-        return (CreditCard) repository.findByCardNumber(cardId).get();
+    public CreditCard getCreditCardByCardNumber(String cardNumber) {
+        return (CreditCard) repository.findByCardNumber(cardNumber).get();
     }
 
     @Override
@@ -102,6 +107,6 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public Card getCardById(String cardId) {
-        return repository.findByCardNumber(cardId).get();    }
+    public Card getCardByCardNumber(String cardNumber) {
+        return repository.findByCardNumber(cardNumber).get();    }
 }

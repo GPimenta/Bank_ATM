@@ -55,10 +55,28 @@ public class InMemCardRepositoryImpl extends InMemRepository<Card> implements IC
                 .filter(card -> card.getCustomerId().equals(customerId)).collect(Collectors.toList());
     }
 
+
+    public Collection<CreditCard> getAllCreditCardByCustomerId(int customerId){
+        return getAll().stream()
+                .filter(card -> card.getCustomerId() == customerId)
+                .filter(card -> card instanceof CreditCard)
+                .map(card -> (CreditCard) card)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<DebitCard> getAllDebitCardByCustomerId(int customerId){
+        return getAll().stream()
+                .filter(card -> card.getCustomerId() == customerId)
+                .filter(card -> card instanceof CreditCard)
+                .map(card -> (DebitCard) card)
+                .collect(Collectors.toList());
+    }
+
+
     @Override
     public Optional<CreditCard> getCreditCardByCustomerId(int customerId){
         return getAll().stream()
-                .filter(card -> card.getId() == customerId)
+                .filter(card -> card.getCustomerId() == customerId)
                 .filter(card -> card instanceof CreditCard)
                 .map(card -> (CreditCard) card)
                 .findFirst();
@@ -67,7 +85,7 @@ public class InMemCardRepositoryImpl extends InMemRepository<Card> implements IC
     @Override
     public Optional<DebitCard> getDebitCardByCustomerId(int customerId){
         return getAll().stream()
-                .filter(card -> card.getId() == customerId)
+                .filter(card -> card.getCustomerId() == customerId)
                 .filter(card -> card instanceof DebitCard)
                 .map(card -> (DebitCard) card)
                 .findFirst();

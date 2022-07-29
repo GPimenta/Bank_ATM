@@ -21,16 +21,17 @@ public interface ICardService {
     Collection<Card> findAllCardsByCustomerId(Integer customerId);
 
     Collection<DebitCard> findAllDebitCardsByCustomerId(Integer customerId);
+    Collection<CreditCard> findAllCreditCardsByCustomerId(Integer customerId);
 
-    DebitCard getDebitCardByCardId(String cardId);
+    DebitCard getDebitCardByCardNumber(String cardNumber);
 
     DebitCard getDebitCardByCustomerId(Integer customerId);
 
-    CreditCard getCreditCardByCardId(String cardId);
+    CreditCard getCreditCardByCardNumber(String cardNumber);
 
     CreditCard getCreditCardByCustomerId(Integer customerId);
 
-    Card getCardById(String cardId);
+    Card getCardByCardNumber(String cardId);
 
 
 }
