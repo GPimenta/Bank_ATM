@@ -77,7 +77,32 @@ class CardServiceTest {
     }
 
     @Test
-    void findAllDebitCardsByCustomerId() {
+    void findAllDebitCardsByCustomerId() throws CardConflictException {
+        CreditCard creditCard1 = cardService.createCreditCard(1, 1);
+        DebitCard debitCard1 = cardService.createDebitCard(1, 1);
+        DebitCard debitCard2 = cardService.createDebitCard(2, 1);
+        DebitCard debitCard3 = cardService.createDebitCard(3, 2);
+
+        Collection<DebitCard> cardsActual = List.of(debitCard1, debitCard2);
+
+        Collection<DebitCard> cards = cardService.findAllDebitCardsByCustomerId(1);
+
+        assertEquals(cards, cardsActual);
+
+    }
+
+    @Test
+    void findAllCreditCardsByCustomerId() throws CardConflictException {
+        CreditCard creditCard1 = cardService.createCreditCard(1, 1);
+        CreditCard creditCard2 = cardService.createCreditCard(2, 1);
+        DebitCard debitCard2 = cardService.createDebitCard(2, 1);
+        DebitCard debitCard3 = cardService.createDebitCard(3, 2);
+
+        Collection<CreditCard> cardsActual = List.of(creditCard1, creditCard2);
+
+        Collection<CreditCard> cards = cardService.findAllCreditCardsByCustomerId(1);
+
+        assertEquals(cards, cardsActual);
     }
 
     @Test

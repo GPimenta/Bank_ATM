@@ -24,8 +24,8 @@ public class InMemCustomerRepositoryImpl implements ICustomerRepository{
         }
         Customer customer = newItem;
         newItem.setId(generateCustomerId());
-        repository.add(newItem);
-        return Optional.of(newItem);
+        repository.add(customer); // change from newItem to customer
+        return Optional.of(customer);
     }
 
     @Override

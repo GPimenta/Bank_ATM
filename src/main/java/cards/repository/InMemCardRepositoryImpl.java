@@ -67,7 +67,7 @@ public class InMemCardRepositoryImpl extends InMemRepository<Card> implements IC
     public Collection<DebitCard> getAllDebitCardByCustomerId(int customerId){
         return getAll().stream()
                 .filter(card -> card.getCustomerId() == customerId)
-                .filter(card -> card instanceof CreditCard)
+                .filter(card -> card instanceof DebitCard)
                 .map(card -> (DebitCard) card)
                 .collect(Collectors.toList());
     }

@@ -8,42 +8,34 @@ import java.util.Objects;
 
 public class Transaction implements IdentificationItem {
     private Integer id;
-    private Integer accountID;
+    private Integer fromAccountId;
+    private Integer toAccoundId;
     private Integer cardId;
     private LocalDateTime timestamp;
     private String amount;
 
 
-    public Transaction(Integer id, Integer accountID, Integer cardId, LocalDateTime timestamp, String amount) {
+    public Transaction(Integer id, Integer fromAccountId, Integer toAccoundId, Integer cardId, LocalDateTime timestamp, String amount) {
         this.id = id;
-        this.accountID = IPreconditions.checkNotNull(accountID, "Account Id cannot be null");
+        this.fromAccountId = IPreconditions.checkNotNull(fromAccountId, "From Account Id cannot be null");
+        this.toAccoundId = IPreconditions.checkNotNull(fromAccountId, "To Account Id cannot be null");
         this.cardId = IPreconditions.checkNotNull(cardId, "Card Id cannot be null");
         this.timestamp = IPreconditions.requireNonNullElse(timestamp, LocalDateTime.now());
         this.amount = IPreconditions.checkNotNull(amount, "Amount cannot be null");
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Objects.equals(id, that.id) && Objects.equals(accountID, that.accountID) && Objects.equals(cardId, that.cardId) && Objects.equals(timestamp, that.timestamp) && Objects.equals(amount, that.amount);
+        return Objects.equals(id, that.id) && Objects.equals(fromAccountId, that.fromAccountId) && Objects.equals(toAccoundId, that.toAccoundId) && Objects.equals(cardId, that.cardId) && Objects.equals(timestamp, that.timestamp) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accountID, cardId, timestamp, amount);
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "id=" + id +
-                ", accountId=" + accountID +
-                ", cardId=" + cardId +
-                ", timestamp=" + timestamp +
-                ", amount='" + amount + '\'' +
-                '}';
+        return Objects.hash(id, fromAccountId, toAccoundId, cardId, timestamp, amount);
     }
 
     @Override
@@ -55,12 +47,20 @@ public class Transaction implements IdentificationItem {
         this.id = id;
     }
 
-    public Integer getAccountID() {
-        return accountID;
+    public Integer getFromAccountId() {
+        return fromAccountId;
     }
 
-    public void setAccountID(Integer accountID) {
-        this.accountID = accountID;
+    public void setFromAccountId(Integer fromAccountId) {
+        this.fromAccountId = fromAccountId;
+    }
+
+    public Integer getToAccoundId() {
+        return toAccoundId;
+    }
+
+    public void setToAccoundId(Integer toAccoundId) {
+        this.toAccoundId = toAccoundId;
     }
 
     public Integer getCardId() {
@@ -87,9 +87,11 @@ public class Transaction implements IdentificationItem {
         this.amount = amount;
     }
 
+
     public static class Builder {
         private Integer id;
-        private Integer accountId;
+        private Integer fromAccountId;
+        private Integer toAccountId;
         private Integer cardId;
         private LocalDateTime timestamp;
         private String amount;
@@ -103,8 +105,12 @@ public class Transaction implements IdentificationItem {
             return this;
         }
 
-        public Builder withAccountId(Integer accountId) {
-            this.accountId = accountId;
+        public Builder withFromAccountId(Integer accountId) {
+            this.fromAccountId = accountId;
+            return this;
+        }
+        public Builder withToAccountId(Integer accountId) {
+            this.toAccountId = accountId;
             return this;
         }
 
@@ -122,7 +128,7 @@ public class Transaction implements IdentificationItem {
         }
 
         public Transaction build() {
-            return new Transaction(id, accountId,cardId, timestamp,amount);
+            return new Transaction(id, fromAccountId, toAccountId, cardId, timestamp, amount);
         }
     }
 
