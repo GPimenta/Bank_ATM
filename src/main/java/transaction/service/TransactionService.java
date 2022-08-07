@@ -6,8 +6,8 @@ import utils.IPreconditions;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-{
-public class TransactionService implements  ITransactionService
+
+public class TransactionService implements  ITransactionService{
 
     private final ITransactionRepository repository;
 
