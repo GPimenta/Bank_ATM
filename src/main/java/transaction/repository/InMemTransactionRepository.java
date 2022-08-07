@@ -42,6 +42,7 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
         return repository.removeIf(transaction -> transaction.getId().equals(id));
     }
     @Override
+
     public Optional<Transaction> update(Transaction newItem) {
         if (deleteById(newItem.getId())){
             repository.add(newItem);
@@ -100,8 +101,8 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
     }
 
     @Override
-    public Optional<Transaction> getTransactionFromToAccountId(Integer fromAccountId, LocalDateTime timestamp,
-                                                               Integer toAccountId) {
+    public Optional<Transaction> getTransactionFromAndToAccountId(Integer fromAccountId, LocalDateTime timestamp,
+                                                                  Integer toAccountId) {
         Optional<Transaction> oneTransaction = getAll().stream()
                 .filter(transaction -> (transaction.getFromAccountId().equals(fromAccountId)))
                 .filter(transaction -> (transaction.getToAccoundId().equals(toAccountId)))
