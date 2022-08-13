@@ -70,7 +70,7 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
     }
 
     @Override
-    public Collection<Transaction> findByAllFromAccountId(Integer accountId) throws TransactionNotFoundException {
+    public Collection<Transaction> findByAllFromAccountId(Integer accountId){
         Collection<Transaction> fromAccount = getAll().stream().filter(transaction -> transaction.getFromAccountId().equals(accountId))
                 .collect(Collectors.toList());
 

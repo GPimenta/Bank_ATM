@@ -1,5 +1,7 @@
 package transaction.service;
 
+import accounts.exceptions.AccountNotFoundException;
+import transaction.exceptions.TransactionNotFoundException;
 import transaction.model.Transaction;
 import transaction.repository.ITransactionRepository;
 import utils.IPreconditions;
@@ -23,41 +25,56 @@ public class TransactionService implements  ITransactionService{
                 .withCardId(cardId)
                 .withTimeStamp(timestamp)
                 .build();
-        return null;
+        return transaction;
     }
 
     @Override
-    public Transaction deleteTransaction(Integer transactionId) {
-        return null;
+    public void deleteTransaction(Integer transactionId) throws TransactionNotFoundException {
+        if(!repository.deleteById(transactionId)){
+            throw new TransactionNotFoundException("Transaction with Id: '%d' not found to delete", transactionId);
+        }
     }
 
     @Override
-    public Transaction getTransaction(Integer transactionId) {
-        return null;
+    public Transaction getTransaction(Integer transactionId) throws TransactionNotFoundException {
+        return repository.getById(transactionId).orElseThrow(() -> new TransactionNotFoundException("Transaction" +
+                " with Id: '%d' not found to get Account", transactionId));
     }
 
-    @Override
-    public Transaction updateTransaction(Integer transactionId) {
-        return null;
-    }
+//    @Override
+//    public Transaction updateTransaction(Integer transactionId) throws TransactionNotFoundException {
+//        Transaction transaction = getTransaction(transactionId);
+//        repository.update(tra)
+//        return null;
+//    }
 
     @Override
     public Collection<Transaction> findByAllTransactionsFromAccountId(Integer accountId) {
-        return null;
+        if (repository.findByAllFromAccountId(accountId).isEmpty())
+            System.out.println("No transaction made from this account");
+        return repository.findByAllFromAccountId(accountId);
     }
 
     @Override
     public Collection<Transaction> findByAllTransactionsToAccountId(Integer accountId) {
-        return null;
+        if(repository.findByAllToAccountId(accountId).isEmpty())
+            System.out.println("No transaction made to this account");
+        return repository.findByAllToAccountId(accountId);
     }
 
     @Override
     public Collection<Transaction> findByAllTransactionsFromAndToAccountId(Integer fromAccountId, Integer toAccountId) {
-        return null;
+        if (repository.findByAllFromAndToAccountId(fromAccountId, toAccountId).isEmpty())
+            System.out.println("No transaction made from " + fromAccountId + " to " + toAccountId);
+        return repository.findByAllFromAndToAccountId(fromAccountId, toAccountId);
     }
 
     @Override
-    public Collection<Transaction> getTransactionFromAndToAccountId(Integer fromAccountId, LocalDateTime timestamp, Integer toAccountId) {
-        return null;
+    public Transaction getTransactionFromAndToAccountId(Integer fromAccountId, LocalDateTime timestamp, Integer toAccountId)
+            throws TransactionNotFoundException {
+
+        return repository.getTransactionFromAndToAccountId(fromAccountId, timestamp, toAccountId).orElseThrow(() ->
+                new TransactionNotFoundException("Transaction from %i, to %i, at %s ", fromAccountId,  toAccountId,
+                        timestamp.toString()));
     }
 }

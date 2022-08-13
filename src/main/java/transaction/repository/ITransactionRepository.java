@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ITransactionRepository extends IRepository<Transaction> {
 
-    Collection<Transaction> findByAllFromAccountId(Integer accountId) throws TransactionNotFoundException;
+    Collection<Transaction> findByAllFromAccountId(Integer accountId);
 
     Collection<Transaction> findByAllToAccountId(Integer accountId);
 

@@ -1,5 +1,6 @@
 package transaction.service;
 
+import transaction.exceptions.TransactionNotFoundException;
 import transaction.model.Transaction;
 
 import java.time.LocalDateTime;
@@ -10,11 +11,11 @@ public interface ITransactionService {
     Transaction createTransaction(Integer fromAccountId, Integer toAccount, Integer cardId, LocalDateTime timestamp,
                                   String amount);
 
-    Transaction deleteTransaction(Integer transactionId);
+    void deleteTransaction(Integer transactionId) throws TransactionNotFoundException;
 
-    Transaction getTransaction(Integer transactionId);
+    Transaction getTransaction(Integer transactionId) throws TransactionNotFoundException;
 
-    Transaction updateTransaction(Integer transactionId);
+//    Transaction updateTransaction(Integer transactionId, Integer fromAccountId, Integer toAccountId) throws TransactionNotFoundException;
 
     Collection<Transaction> findByAllTransactionsFromAccountId(Integer accountId);
 
@@ -22,8 +23,8 @@ public interface ITransactionService {
 
     Collection<Transaction> findByAllTransactionsFromAndToAccountId(Integer fromAccountId, Integer toAccountId);
 
-    Collection<Transaction> getTransactionFromAndToAccountId(Integer fromAccountId, LocalDateTime timestamp,
-                                                             Integer toAccountId);
+    Transaction getTransactionFromAndToAccountId(Integer fromAccountId, LocalDateTime timestamp,
+                                                             Integer toAccountId) throws TransactionNotFoundException;
 
 
 }
