@@ -30,6 +30,7 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
         if (newItem == null){
             throw new IllegalArgumentException("Transaction can not be null");
         }
+
         Transaction transaction = newItem;
         transaction.setId(generateTransactionId());
         repository.add(transaction);

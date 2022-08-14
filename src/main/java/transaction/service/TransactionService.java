@@ -28,6 +28,8 @@ public class TransactionService implements  ITransactionService{
                 .withTimeStamp(timestamp)
                 .withAmount(amount)
                 .build();
+
+        repository.create(transaction);
         return repository.create(transaction).orElseThrow(() -> new TransactonConflictException("Conflict on creating" +
                 " transaction with from Account Id: '%i' to Account Id: %i", fromAccountId, toAccountId));
     }
