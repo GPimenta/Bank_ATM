@@ -23,7 +23,7 @@ public class InMemCustomerRepositoryImpl implements ICustomerRepository{
             throw new IllegalArgumentException("Customer can not be null");
         }
         Customer customer = newItem;
-        newItem.setId(generateCustomerId());
+        customer.setId(generateCustomerId());
         repository.add(customer); // change from newItem to customer
         return Optional.of(customer);
     }

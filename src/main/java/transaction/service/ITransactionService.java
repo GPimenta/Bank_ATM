@@ -1,6 +1,7 @@
 package transaction.service;
 
 import transaction.exceptions.TransactionNotFoundException;
+import transaction.exceptions.TransactonConflictException;
 import transaction.model.Transaction;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.util.Collection;
 public interface ITransactionService {
 
     Transaction createTransaction(Integer fromAccountId, Integer toAccount, Integer cardId, LocalDateTime timestamp,
-                                  String amount);
+                                  String amount) throws TransactonConflictException;
 
     void deleteTransaction(Integer transactionId) throws TransactionNotFoundException;
 

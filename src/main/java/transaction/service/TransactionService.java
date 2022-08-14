@@ -2,6 +2,7 @@ package transaction.service;
 
 import accounts.exceptions.AccountNotFoundException;
 import transaction.exceptions.TransactionNotFoundException;
+import transaction.exceptions.TransactonConflictException;
 import transaction.model.Transaction;
 import transaction.repository.ITransactionRepository;
 import utils.IPreconditions;
@@ -18,14 +19,17 @@ public class TransactionService implements  ITransactionService{
     }
 
     @Override
-    public Transaction createTransaction(Integer fromAccountId, Integer toAccount, Integer cardId, LocalDateTime timestamp, String amount) {
+    public Transaction createTransaction(Integer fromAccountId, Integer toAccountId, Integer cardId, LocalDateTime timestamp,
+                                         String amount) throws TransactonConflictException {
         Transaction transaction = new Transaction.Builder()
                 .withFromAccountId(fromAccountId)
-                .withToAccountId(toAccount)
+                .withToAccountId(toAccountId)
                 .withCardId(cardId)
                 .withTimeStamp(timestamp)
+                .withAmount(amount)
                 .build();
-        return transaction;
+        return repository.create(transaction).orElseThrow(() -> new TransactonConflictException("Conflict on creating" +
+                " transaction with from Account Id: '%i' to Account Id: %i", fromAccountId, toAccountId));
     }
 
     @Override
