@@ -18,12 +18,23 @@ public class Transaction implements IdentificationItem {
     public Transaction(Integer id, Integer fromAccountId, Integer toAccoundId, Integer cardId, LocalDateTime timestamp, String amount) {
         this.id = id;
         this.fromAccountId = IPreconditions.checkNotNull(fromAccountId, "From Account Id cannot be null");
-        this.toAccoundId = IPreconditions.checkNotNull(fromAccountId, "To Account Id cannot be null");
+        this.toAccoundId = IPreconditions.checkNotNull(toAccoundId, "To Account Id cannot be null");
         this.cardId = IPreconditions.checkNotNull(cardId, "Card Id cannot be null");
         this.timestamp = IPreconditions.requireNonNullElse(timestamp, LocalDateTime.now());
         this.amount = IPreconditions.checkNotNull(amount, "Amount cannot be null");
     }
 
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", fromAccountId=" + fromAccountId +
+                ", toAccoundId=" + toAccoundId +
+                ", cardId=" + cardId +
+                ", timestamp=" + timestamp +
+                ", amount='" + amount + '\'' +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {

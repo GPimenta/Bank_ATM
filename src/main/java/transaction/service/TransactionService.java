@@ -29,9 +29,8 @@ public class TransactionService implements  ITransactionService{
                 .withAmount(amount)
                 .build();
 
-        repository.create(transaction);
         return repository.create(transaction).orElseThrow(() -> new TransactonConflictException("Conflict on creating" +
-                " transaction with from Account Id: '%i' to Account Id: %i", fromAccountId, toAccountId));
+                " transaction with from Account Id: '%d' to Account Id: %d", fromAccountId, toAccountId));
     }
 
     @Override

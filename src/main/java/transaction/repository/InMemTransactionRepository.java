@@ -1,6 +1,7 @@
 package transaction.repository;
 
 import common.repository.InMemRepository;
+import jdk.javadoc.doclet.Reporter;
 import transaction.exceptions.TransactionNotFoundException;
 import transaction.model.Transaction;
 
@@ -19,6 +20,7 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
     }
 
     public Optional<Transaction> create(Transaction newItem){
+        System.out.println(newItem.toString());
         if (getAll().stream()
                 .anyMatch(transaction ->
                         ( (transaction.getFromAccountId().equals(newItem.getFromAccountId())) &&
@@ -26,7 +28,12 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
                                 (transaction.getTimestamp().equals(newItem.getTimestamp()))
                                 )
             )
-        )
+        ){
+
+            return Optional.empty();
+        }
+
+
         if (newItem == null){
             throw new IllegalArgumentException("Transaction can not be null");
         }
@@ -64,10 +71,10 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
 
     @Override
     public Collection<Transaction> getAll() {
-        if (repository.isEmpty()){
-            throw new IllegalArgumentException("Transaction repository is empty");
-        }
-        return repository;
+        Stack<Transaction> stack = new Stack<>();
+        stack.addAll(repository);
+
+        return stack;
     }
 
     @Override
