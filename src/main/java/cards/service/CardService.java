@@ -52,7 +52,7 @@ public class CardService implements ICardService {
                 .withCashAdvance(250)
                 .build();
         return (CreditCard) repository.create(creditCard).orElseThrow(() -> new CardConflictException("Conflict" +
-                " on creating DebitCard with customer Id: '%i'", customerId));
+                " on creating Creditcard with customer Id: '%i'", customerId));
     }
 
     @Override
@@ -60,16 +60,24 @@ public class CardService implements ICardService {
         if(!repository.deleteById(cardId)) {
             throw new CardNotFoundException("Card with Id %d not found to delete", cardId);
         }
+    }
 
+    @Override
+    public boolean checkIfDebitCard(String cardNumber) {
+        return getCardByCardNumber(cardNumber) instanceof DebitCard;
     }
 
     @Override
     public boolean checkCardNumberAndPassword(String cardNumber, String pin) {
-        if (repository.findByCardNumber(cardNumber).isPresent() &&
-                repository.findByCardNumber(cardNumber).get().getPin().equals(pin)) {
-            return true;
-        }
-        return false;
+        return repository.findByCardNumber(cardNumber).isPresent() &&
+                repository.findByCardNumber(cardNumber).get().getPin().equals(pin);
+    }
+    @Override
+    public Card updateCard(String cardNumber) throws CardConflictException, CardNotFoundException {
+        final Card oldCard = getCardByCardNumber(cardNumber);
+        oldCard.setPin(generatePinNumber());
+        oldCard.setUsed(true);
+        return repository.update(oldCard).orElseThrow(() -> new CardNotFoundException("Unable to update card %s, the same was not found", cardNumber));
     }
 
     @Override

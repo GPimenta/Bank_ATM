@@ -16,7 +16,11 @@ public interface ICardService {
 
     void deleteCard(Integer cardId) throws CardNotFoundException;
 
+    boolean checkIfDebitCard(String cardNumber);
+
     boolean checkCardNumberAndPassword(String cardNumber, String pin);
+
+    Card updateCard(String cardNumber) throws CardConflictException, CardNotFoundException;
 
     Collection<Card> findAllCardsByCustomerId(Integer customerId);
 

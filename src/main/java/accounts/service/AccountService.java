@@ -54,6 +54,14 @@ public class AccountService implements IAccountService {
                 .orElseThrow(() -> new AccountNotFoundException("Account with Id: '%d' not found to get Account", accountId));
     }
 
+    public Account updateAccount(String accountNumber, String newPassword, Double balance, List<Integer> secondaryOwners) throws AccountNotFoundException {
+        final Account oldAccount = repository.findAccountByAccountNumber(accountNumber).orElseThrow(() -> new AccountNotFoundException("Account number %s not found"));
+
+        oldAccount.setPassword(newPassword);
+        oldAccount.setBalance(balance);
+        oldAccount.setSecondaryOwnersId(secondaryOwners);
+        return repository.update(oldAccount).orElseThrow(() -> new AccountNotFoundException("Account number %s not found", accountNumber));
+    }
     @Override
     public Account findAccountByHolderCustomerId(Integer customerId) throws AccountNotFoundException {
 

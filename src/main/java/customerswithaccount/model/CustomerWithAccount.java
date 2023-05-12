@@ -27,7 +27,12 @@ public class CustomerWithAccount implements IdentificationItem {
         this.customer = IPreconditions.checkNotNull(customer,"Customer can not be null");;
         this.account = IPreconditions.checkNotNull(account, "Account can not be null");
         this.debitCard = IPreconditions.checkNotNull(debitCard, "DebitCard can not be null");
+    }
 
+    public CustomerWithAccount(Customer customer, Account account, CreditCard creditCard){
+        this.customer = IPreconditions.checkNotNull(customer,"Customer can not be null");;
+        this.account = IPreconditions.checkNotNull(account, "Account can not be null");
+        this.creditCard = IPreconditions.checkNotNull(creditCard, "CreditCard can not be null");
     }
 
     public CustomerWithAccount(Customer customer, Account account, DebitCard debitCard, CreditCard creditCard){
@@ -36,6 +41,17 @@ public class CustomerWithAccount implements IdentificationItem {
         this.debitCard = IPreconditions.checkNotNull(debitCard, "DebitCard can not be null");
         this.creditCard = IPreconditions.checkNotNull(creditCard, "CreditCard can not be null");
     }
+
+//    public CustomerWithAccount(Customer customer, Account account, Card debitCard, Card creditCard) {
+//        this.customer = IPreconditions.checkNotNull(customer,"Customer can not be null");;
+//        this.account = IPreconditions.checkNotNull(account, "Account can not be null");
+//
+//        if (debitCard instanceof DebitCard) {
+//            this.debitCard = (DebitCard) debitCard;
+//        } else {
+//            this.creditCard = (CreditCard) debitCard;
+//        }
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -97,6 +113,10 @@ public class CustomerWithAccount implements IdentificationItem {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public static class Builder{
         private Integer id;
         private Customer customer;
@@ -133,7 +153,25 @@ public class CustomerWithAccount implements IdentificationItem {
             return this;
         }
 
+        public CustomerWithAccount build(){
+            CustomerWithAccount customerWithAccount = new CustomerWithAccount(customer, account);
+            return customerWithAccount;
+        }
 
+        public CustomerWithAccount buildDebitCard(){
+            CustomerWithAccount customerWithAccount = new CustomerWithAccount(customer, account, debitCard);
+            return customerWithAccount;
+        }
+
+        public CustomerWithAccount buildCreditCard(){
+            CustomerWithAccount customerWithAccount = new CustomerWithAccount(customer, account, creditCard);
+            return customerWithAccount;
+        }
+
+        public CustomerWithAccount buildAllCard(){
+            CustomerWithAccount customerWithAccount = new CustomerWithAccount(customer, account, debitCard, creditCard);
+            return customerWithAccount;
+        }
     }
 
 

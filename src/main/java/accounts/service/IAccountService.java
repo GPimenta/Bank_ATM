@@ -4,6 +4,8 @@ import accounts.exceptions.*;
 import accounts.model.Account;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public interface IAccountService {
 
@@ -12,6 +14,8 @@ public interface IAccountService {
     void deleteAccount(Integer accountId) throws AccountNotFoundException;
 
     Account getAccount(Integer accountId) throws AccountNotFoundException;
+
+    public Account updateAccount(String accountNumber, String newPassword, Double balance, List<Integer> secondaryOwners) throws AccountNotFoundException;
 
     Account findAccountByHolderCustomerId(Integer customerId) throws AccountNotFoundException;
 

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface IRepository<T extends IdentificationItem> {
-
     Optional<T> create(T newItem);
 
     boolean deleteById(Integer id);

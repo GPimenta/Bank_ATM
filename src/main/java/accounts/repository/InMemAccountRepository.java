@@ -16,7 +16,7 @@ public class InMemAccountRepository extends InMemRepository<Account> implements 
     }
 
     @Override
-    public Optional<Account> create (Account newItem){
+    public Optional<Account> create(Account newItem){
         if (getAll().stream().anyMatch(account -> account.getAccountNumber().equals(newItem.getAccountNumber()))){
             return Optional.empty();
         }
@@ -24,6 +24,11 @@ public class InMemAccountRepository extends InMemRepository<Account> implements 
         account.setId(generateAccountId());
         return super.create(account);
     }
+
+    public Optional<Account> findAccountByAccountNumber(String accountNumber){
+        return getAll().stream().filter(account -> account.getAccountNumber().equals(accountNumber)).findAny();
+    }
+
     @Override
     public Optional<Account> findByHolderCustomerId(Integer customerId){
         return getAll().stream().filter(account -> account.getCustomerId() == customerId).findAny();

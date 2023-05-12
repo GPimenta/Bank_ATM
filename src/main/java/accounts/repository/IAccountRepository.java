@@ -10,5 +10,7 @@ public interface IAccountRepository extends IRepository<Account> {
     Optional<Account> findByHolderCustomerId(Integer customerId);
     Collection<Account> findBySecondaryCustomerId(Integer customerId);
     Collection<Account> findByAllCustomerId(Integer customerId);
+    Optional<Account> findAccountByAccountNumber(String accountNumber);
+
 
 }
