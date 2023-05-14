@@ -120,9 +120,7 @@ public class AccountService implements IAccountService {
         if (fromAccount.equals(toAccount)){
             throw new AccountConflictException("Cannot transfer money, from AccountId: '%d' to the same AccountId: '%d'", fromAccount, toAccount);
         }
-
         withdrawAccount(fromAccount, amount);
-
         depositAccount(toAccount, amount);
     }
 
@@ -159,7 +157,6 @@ public class AccountService implements IAccountService {
         if (!secondaryOwners.remove(customerId)){
             throw new AccountNotFoundException("Customer with Id: '%d' not found, on secondaryOwner List", customerId);
         }
-
         account.getSecondaryOwnersId().remove(customerId);
         repository.update(account);
     }

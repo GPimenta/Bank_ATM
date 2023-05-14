@@ -116,5 +116,6 @@ public class CardService implements ICardService {
 
     @Override
     public Card getCardByCardNumber(String cardNumber) {
-        return repository.findByCardNumber(cardNumber).get();    }
+        return repository.findByCardNumber(cardNumber).get();
+    }
 }

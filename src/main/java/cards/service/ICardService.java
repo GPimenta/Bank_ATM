@@ -35,7 +35,7 @@ public interface ICardService {
 
     CreditCard getCreditCardByCustomerId(Integer customerId);
 
-    Card getCardByCardNumber(String cardId);
+    Card getCardByCardNumber(String cardNumber);
 
 
 }

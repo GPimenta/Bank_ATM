@@ -1,47 +1,44 @@
 package customerswithaccount.service;
 
-import accounts.exceptions.AccountConflictException;
+import accounts.exceptions.*;
 import accounts.model.Account;
-import accounts.repository.IAccountRepository;
-import accounts.service.AccountService;
 import accounts.service.IAccountService;
 import cards.exceptions.CardConflictException;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
-import cards.repository.ICardRepository;
-import cards.service.CardService;
 import cards.service.ICardService;
 import costumers.exceptions.CustomerConflictException;
 import costumers.exceptions.CustomerNotFoundException;
 import costumers.model.Customer;
-import costumers.repository.ICustomerRepository;
-import costumers.service.CustomerService;
 import costumers.service.ICustomerService;
 import customerswithaccount.exceptions.CustomerWithAccountConflictException;
 import customerswithaccount.exceptions.CustomerWithAccountNotFoundException;
 import customerswithaccount.model.CustomerWithAccount;
 import customerswithaccount.repository.ICustomerWithAccountRepository;
+import transaction.exceptions.TransactonConflictException;
+import transaction.service.ITransactionService;
 import utils.IPreconditions;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CustomerWithAccountService implements ICustomerWithAccountService {
-
-    //MAYBE WE HAVE TO CHANGE TO SERVICES INSTEAD OF REPOSITORIES
 
     private final ICustomerWithAccountRepository repository;
     private final ICustomerService customerService;
     private final IAccountService accountService;
     private final ICardService cardService;
+    private final ITransactionService transactionService;
 
 
 
-    public CustomerWithAccountService(ICustomerWithAccountRepository repository, ICustomerService customerService, IAccountService accountService, ICardService cardService) {
+    public CustomerWithAccountService(ICustomerWithAccountRepository repository, ICustomerService customerService, IAccountService accountService, ICardService cardService, ITransactionService transactionService) {
         this.repository = IPreconditions.checkNotNull(repository, "CustomerWithAccount Repository cannot be null");
         this.customerService = IPreconditions.checkNotNull(customerService, "Customer service cannot be null");
         this.accountService = IPreconditions.checkNotNull(accountService, "Account service cannot be null");
         this.cardService = IPreconditions.checkNotNull(cardService, "Card service cannot be null");
+        this.transactionService = IPreconditions.checkNotNull(transactionService, "Transaction service cannot be null");
     }
 
     @Override
@@ -130,6 +127,49 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return addDebitCardToCustomerWithAccount(accountNumber);
     }
 
+
+    private void withdrawMoney(CustomerWithAccount customerWithAccount, Double amount) throws AccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException {
+        accountService.withdrawAccount(customerWithAccount.getAccount().getId(),amount);
+    }
+
+    private void depositMoney(CustomerWithAccount customerWithAccount, Double amount) throws AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException, AccountNotFoundException {
+        accountService.withdrawAccount(customerWithAccount.getAccount().getId(), amount);
+    }
+
+    public boolean withdrawMoneyWithCard(String cardNumber, String pin, Double amount) throws CustomerWithAccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException, AccountNotFoundException {
+        if (cardService.checkCardNumberAndPassword(cardNumber, pin)) {
+            depositMoney(findCustomerWithAccountThroughCardNumber(cardNumber), amount);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean transferMoneyWithCard (String cardNumber, String pin, String accountNumber, Double amount) throws CustomerWithAccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountVoidDepositException, AccountConflictException, AccountNotFoundException, TransactonConflictException {
+        if (cardService.checkCardNumberAndPassword(cardNumber, pin)) {
+            final Integer fromAccountId = findCustomerWithAccountThroughCardNumber(cardNumber).getAccount().getId();
+            final Integer toAccountId = findCustomerWithAccountThroughAccountNumber(accountNumber).getAccount().getId();
+            final Integer cardId = cardService.getCardByCardNumber(cardNumber).getId();
+
+            accountService.transferMoney(fromAccountId, toAccountId, amount);
+            transactionService.createTransaction(fromAccountId, toAccountId, cardId, LocalDateTime.now(), String.valueOf(amount));
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void addSecondaryOwners(String primaryAccountOwner, String secondaryCustomerTaxIdOwner) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountConflictException, AccountNotFoundException {
+        final CustomerWithAccount primaryCustomerWithAccount = findCustomerWithAccountThroughAccountNumber(primaryAccountOwner);
+        accountService.addSecondaryOwner(primaryCustomerWithAccount.getAccount().getId(), customerService.findByTaxId(secondaryCustomerTaxIdOwner).getId());
+    }
+
+    public void deleteSecondaryOwners(String primaryAccountOwner, String secondaryCustomerTaxIdOwner) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountConflictException, AccountNotFoundException {
+        final CustomerWithAccount primaryCustomerWithAccount = findCustomerWithAccountThroughAccountNumber(primaryAccountOwner);
+        accountService.deleteSecondaryOwner(primaryCustomerWithAccount.getAccount().getId(), customerService.findByTaxId(secondaryCustomerTaxIdOwner).getId());
+    }
+
     public CustomerWithAccount findCustomerWithAccountThroughAccountNumber(String accountNumber) throws CustomerWithAccountNotFoundException {
         return repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %i not found", accountNumber));
     }
@@ -139,6 +179,6 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
     }
 
     public CustomerWithAccount findCustomerWithAccountThroughCardNumber(String cardNumber) throws CustomerWithAccountNotFoundException {
-        return repository.findCustomerWithAccountThroughDebitCard(cardNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %i not found", cardNumber));
+        return repository.findCustomerWithAccountThroughDebitCard(cardNumber).orElse(repository.findCustomerWithAccountThroughCreditCard(cardNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %i not found", cardNumber)));
     }
 }
