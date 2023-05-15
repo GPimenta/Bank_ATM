@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemAccountRepositoryTest {
 
-    InMemAccountRepository accountRepository = new InMemAccountRepository();
+    IAccountRepository accountRepository = new InMemAccountRepository();
     Account account1 = new Account.Builder()
             .withCustomerId(1)
             .withAccountNumber("12345")
