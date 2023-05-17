@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import utils.INumbersGenerator;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,21 +59,41 @@ class InMemCustomerRepositoryImplTest {
 
     @Test
     void deleteById() {
+        customerRepository.deleteById(2);
+
+        assertEquals(2, customerRepository.getAll().size());
+        assertEquals(customer1, customerRepository.getAll().stream().filter(customer -> customer.equals(customer1)).findAny().get());
+        assertEquals(customer3, customerRepository.getAll().stream().filter(customer -> customer.equals(customer3)).findAny().get());
+
     }
 
     @Test
     void update() {
+        Customer customerTest = customer1;
+        final String taxIdCustomer1 = customer1.getTaxId();
+
+        customerTest.setName("Pikachu");
+        customerRepository.update(customerTest);
+        assertEquals(customerTest, customerRepository.getAll().stream().filter(customer -> customer.getTaxId() == taxIdCustomer1).findFirst().get());
     }
 
     @Test
     void getById() {
+        assertEquals(customer1, customerRepository.getById(1).get());
     }
 
     @Test
     void getAll() {
+        assertEquals(3, customerRepository.getAll().size());
+        assertEquals(customer1, customerRepository.getAll().stream().filter(customer -> customer.getId() == customer1.getId()).findFirst().get());
+        assertEquals(customer2, customerRepository.getAll().stream().filter(customer -> customer.getId() == customer2.getId()).findFirst().get());
+        assertEquals(customer3, customerRepository.getAll().stream().filter(customer -> customer.getId() == customer3.getId()).findFirst().get());
     }
 
     @Test
     void getByTaxId() {
+        assertEquals(customer1, customerRepository.getByTaxId(customer1.getTaxId()).get());
+        assertEquals(customer2, customerRepository.getByTaxId(customer2.getTaxId()).get());
+        assertEquals(customer3, customerRepository.getByTaxId(customer3.getTaxId()).get());
     }
 }
