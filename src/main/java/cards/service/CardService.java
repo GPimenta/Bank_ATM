@@ -10,7 +10,6 @@ import utils.INumbersGenerator;
 import utils.IPreconditions;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class CardService implements ICardService {
 
@@ -100,8 +99,8 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public DebitCard getDebitCardByCustomerId(Integer customerId) {
-        return repository.getDebitCardByCustomerId(customerId).get();
+    public DebitCard getDebitCardByCustomerIdAndAccountId(Integer customerId, Integer accountId) {
+        return repository.getDebitCardByCustomerIdAndAccountId(customerId, accountId).get();
     }
 
     @Override
@@ -110,8 +109,8 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public CreditCard getCreditCardByCustomerId(Integer customerId) {
-        return repository.getCreditCardByCustomerId(customerId).get();
+    public CreditCard getCreditCardByCustomerIdAndAccountId(Integer customerId, Integer accountId) {
+        return repository.getCreditCardByCustomerIdAndAccountId(customerId, accountId).get();
     }
 
     @Override

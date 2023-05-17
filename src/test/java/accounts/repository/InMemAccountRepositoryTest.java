@@ -1,6 +1,7 @@
 package accounts.repository;
 
 import accounts.model.Account;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,13 @@ class InMemAccountRepositoryTest {
         accountRepository.create(account2);
         accountRepository.create(account3);
     }
+    @AfterEach
+    void end() {
+        accountRepository.getAll().clear();
+    }
     @Test
     void create() {
-        assertEquals(account1, accountRepository.getAll().stream().findFirst().get());
+        assertEquals(account1, accountRepository.getAll().stream().filter(account -> account.equals(account1)).findFirst().get());
     }
 
     @Test

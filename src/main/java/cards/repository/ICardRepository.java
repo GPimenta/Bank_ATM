@@ -19,9 +19,9 @@ public interface ICardRepository extends IRepository<Card> {
 
     Collection<DebitCard> getAllDebitCardByCustomerId(int customerId);
 
-    Optional<CreditCard> getCreditCardByCustomerId(int customerId);
+    Optional<CreditCard> getCreditCardByCustomerIdAndAccountId(int customerId, int accountId);
 
-    Optional<DebitCard> getDebitCardByCustomerId(int customerId);
+    Optional<DebitCard> getDebitCardByCustomerIdAndAccountId(int customerId, int accountId);
 
 
 

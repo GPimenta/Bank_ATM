@@ -29,11 +29,11 @@ public interface ICardService {
 
     DebitCard getDebitCardByCardNumber(String cardNumber);
 
-    DebitCard getDebitCardByCustomerId(Integer customerId);
+    DebitCard getDebitCardByCustomerIdAndAccountId(Integer customerId, Integer accountId);
 
     CreditCard getCreditCardByCardNumber(String cardNumber);
 
-    CreditCard getCreditCardByCustomerId(Integer customerId);
+    CreditCard getCreditCardByCustomerIdAndAccountId(Integer customerId, Integer accountId);
 
     Card getCardByCardNumber(String cardNumber);
 

@@ -9,7 +9,6 @@ import cards.repository.ICardRepository;
 import cards.repository.InMemCardRepositoryImpl;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -121,7 +120,7 @@ class CardServiceTest {
     @Test
     void getDebitCardByCustomerId() throws CardConflictException {
         DebitCard debitCard1 = cardService.createDebitCard(1, 1);
-        DebitCard debitCard = cardService.getDebitCardByCustomerId(1);
+        DebitCard debitCard = cardService.getDebitCardByCustomerIdAndAccountId(1,1 );
 
         assertEquals(debitCard, debitCard1);
     }
@@ -138,7 +137,7 @@ class CardServiceTest {
     @Test
     void getCreditCardByCustomerId() throws CardConflictException {
         CreditCard creditCard1 = cardService.createCreditCard(1, 1);
-        CreditCard creditCard = cardService.getCreditCardByCustomerId(1);
+        CreditCard creditCard = cardService.getCreditCardByCustomerIdAndAccountId(1, 1);
 
         assertEquals(creditCard, creditCard1);
     }

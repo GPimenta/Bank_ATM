@@ -3,6 +3,8 @@ package cards.repository;
 import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +76,10 @@ class InMemCardRepositoryImplTest {
         cardRepository.create(creditCard3);
     }
 
+    @AfterEach
+    void end() {
+        cardRepository.getAll().clear();
+    }
 
     @Test
     void create() {
@@ -110,17 +116,39 @@ class InMemCardRepositoryImplTest {
 
     @Test
     void getAllCreditCardByCustomerId() {
+        final Collection<CreditCard> allCreditCardByCustomerId = cardRepository.getAllCreditCardByCustomerId(2);
+        assertEquals(2, allCreditCardByCustomerId.size());
+        assertTrue(allCreditCardByCustomerId.contains(creditCard2));
+        assertTrue(allCreditCardByCustomerId.contains(creditCard3));
+        assertFalse(allCreditCardByCustomerId.contains(creditCard1));
     }
 
     @Test
     void getAllDebitCardByCustomerId() {
+        final Collection<DebitCard> allDebitCardByCustomerId = cardRepository.getAllDebitCardByCustomerId(2);
+        assertEquals(2, allDebitCardByCustomerId.size());
+        assertTrue(allDebitCardByCustomerId.contains(debitCard2));
+        assertTrue(allDebitCardByCustomerId.contains(debitCard3));
+        assertFalse(allDebitCardByCustomerId.contains(debitCard1));
     }
 
     @Test
-    void getCreditCardByCustomerId() {
+    void getCreditCardByCustomerIdAndAccountId() {
+        assertEquals(creditCard1, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(creditCard2, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(creditCard3, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(debitCard1, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(debitCard2, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(debitCard3, cardRepository.getCreditCardByCustomerIdAndAccountId(1,1).get());
     }
 
     @Test
-    void getDebitCardByCustomerId() {
+    void getDebitCardByCustomerIdAndAccountId() {
+        assertEquals(debitCard1, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(debitCard2, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(debitCard3, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(creditCard1, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(creditCard2, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
+        assertNotEquals(creditCard3, cardRepository.getDebitCardByCustomerIdAndAccountId(1,1).get());
     }
 }
