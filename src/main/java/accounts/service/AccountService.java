@@ -37,7 +37,7 @@ public class AccountService implements IAccountService {
                 .build();
 
         return repository.create(account)
-                .orElseThrow(() -> new AccountConflictException("Conflict on creating account with customer Id: '%i'", customerId));
+                .orElseThrow(() -> new AccountConflictException("Conflict on creating account with customer Id: '%d'", customerId));
     }
 
     @Override
