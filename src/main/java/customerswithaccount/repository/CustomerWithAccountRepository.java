@@ -79,7 +79,7 @@ public class CustomerWithAccountRepository extends InMemRepository<CustomerWithA
     @Override
     public Optional<CustomerWithAccount> findCustomerWithAccountThroughDebitCard(String debitCardNumber) {
         for (CustomerWithAccount customerWithAccount: repository) {
-            if (customerWithAccount.getDebitCard().getCardNumber().equals(debitCardNumber)) {
+            if (customerWithAccount.getDebitCard() != null && customerWithAccount.getDebitCard().getCardNumber().equals(debitCardNumber)) {
                 return Optional.of(customerWithAccount);
             }
         }
@@ -89,7 +89,7 @@ public class CustomerWithAccountRepository extends InMemRepository<CustomerWithA
     @Override
     public Optional<CustomerWithAccount> findCustomerWithAccountThroughCreditCard(String creditCardNumber) {
         for (CustomerWithAccount customerWithAccount:repository) {
-            if (customerWithAccount.getCreditCard().getCardNumber().equals(creditCardNumber)) {
+            if (customerWithAccount.getCreditCard() != null && customerWithAccount.getCreditCard().getCardNumber().equals(creditCardNumber)) {
                 return Optional.of(customerWithAccount);
             }
         }
@@ -97,8 +97,12 @@ public class CustomerWithAccountRepository extends InMemRepository<CustomerWithA
     }
 
     public Optional<CustomerWithAccount> findCustomerWithAccountThroughCard(String cardNumber) {
-
-        return null;
+        final Optional<CustomerWithAccount> customerWithAccountThroughDebitCard = findCustomerWithAccountThroughDebitCard(cardNumber);
+        final Optional<CustomerWithAccount> customerWithAccountThroughCreditCard = findCustomerWithAccountThroughCreditCard(cardNumber);
+        if (customerWithAccountThroughDebitCard.isEmpty()){
+            return customerWithAccountThroughCreditCard;
+        } else {
+            return customerWithAccountThroughDebitCard;
+        }
     }
-
 }

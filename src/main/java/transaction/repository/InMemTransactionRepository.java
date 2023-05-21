@@ -20,7 +20,6 @@ public class InMemTransactionRepository extends InMemRepository<Transaction> imp
     }
 
     public Optional<Transaction> create(Transaction newItem){
-        System.out.println(newItem.toString());
         if (getAll().stream()
                 .anyMatch(transaction ->
                         ( (transaction.getFromAccountId().equals(newItem.getFromAccountId())) &&

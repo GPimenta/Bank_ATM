@@ -2,7 +2,6 @@ package accounts.repository;
 
 import accounts.model.Account;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemAccountRepositoryTest {
 
-    IAccountRepository accountRepository = new InMemAccountRepository();
+    IAccountRepository repository = new InMemAccountRepository();
     Account account1 = new Account.Builder()
             .withCustomerId(1)
             .withAccountNumber("12345")
@@ -39,44 +38,44 @@ class InMemAccountRepositoryTest {
 
     @BeforeEach
     void setup() {
-        accountRepository.create(account1);
-        accountRepository.create(account2);
-        accountRepository.create(account3);
+        repository.create(account1);
+        repository.create(account2);
+        repository.create(account3);
     }
     @AfterEach
     void end() {
-        accountRepository.getAll().clear();
+        repository.getAll().clear();
     }
     @Test
     void create() {
-        assertEquals(account1, accountRepository.getAll().stream().filter(account -> account.equals(account1)).findFirst().get());
+        assertEquals(account1, repository.getAll().stream().filter(account -> account.equals(account1)).findFirst().get());
     }
 
     @Test
     void findAccountByAccountNumber() {
-        assertEquals(account1, accountRepository.findAccountByAccountNumber(account1.getAccountNumber()).get());
-        assertEquals(account2, accountRepository.findAccountByAccountNumber(account2.getAccountNumber()).get());
-        assertEquals(account3, accountRepository.findAccountByAccountNumber(account3.getAccountNumber()).get());
+        assertEquals(account1, repository.findAccountByAccountNumber(account1.getAccountNumber()).get());
+        assertEquals(account2, repository.findAccountByAccountNumber(account2.getAccountNumber()).get());
+        assertEquals(account3, repository.findAccountByAccountNumber(account3.getAccountNumber()).get());
     }
 
     @Test
     void findByHolderCustomerId() {
-        assertEquals(account1, accountRepository.findByHolderCustomerId(account1.getCustomerId()).get());
-        assertEquals(account2, accountRepository.findByHolderCustomerId(account2.getCustomerId()).get());
-        assertEquals(account3, accountRepository.findByHolderCustomerId(account3.getCustomerId()).get());
+        assertEquals(account1, repository.findByHolderCustomerId(account1.getCustomerId()).get());
+        assertEquals(account2, repository.findByHolderCustomerId(account2.getCustomerId()).get());
+        assertEquals(account3, repository.findByHolderCustomerId(account3.getCustomerId()).get());
     }
 
     @Test
     void findBySecondaryCustomerId() {
-        assertTrue(accountRepository.findBySecondaryCustomerId(2).contains(account1));
-        assertTrue(accountRepository.findBySecondaryCustomerId(2).contains(account3));
-        assertFalse(accountRepository.findBySecondaryCustomerId(2).contains(account2));
+        assertTrue(repository.findBySecondaryCustomerId(2).contains(account1));
+        assertTrue(repository.findBySecondaryCustomerId(2).contains(account3));
+        assertFalse(repository.findBySecondaryCustomerId(2).contains(account2));
     }
 
     @Test
     void findByAllCustomerId() {
-        assertTrue(accountRepository.findByAllCustomerId(2).contains(account1));
-        assertTrue(accountRepository.findByAllCustomerId(2).contains(account2));
-        assertTrue(accountRepository.findByAllCustomerId(2).contains(account3));
+        assertTrue(repository.findByAllCustomerId(2).contains(account1));
+        assertTrue(repository.findByAllCustomerId(2).contains(account2));
+        assertTrue(repository.findByAllCustomerId(2).contains(account3));
     }
 }
