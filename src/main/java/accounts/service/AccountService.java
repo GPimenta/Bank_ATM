@@ -27,6 +27,21 @@ public class AccountService implements IAccountService {
         return INumbersGenerator.createString(Account.ACCOUNT_PASSWORD_LENGTH);
     }
 
+//    @Override
+//    public Account createAccount(Integer customerId, INumbersGenerator numbersGenerator) throws AccountConflictException {
+//        Account account = new Account.Builder()
+//                .withCustomerId(customerId)
+//                .withAccountNumber(INumbersGenerator.createString(Account.ACCOUNT_NUMBER_LENGTH))
+//                .withBalance(0D)
+//                .withPasswordAccount(INumbersGenerator.createString(Account.ACCOUNT_PASSWORD_LENGTH))
+//                .build();
+//
+//        return repository.create(account)
+//                .orElseThrow(() -> new AccountConflictException("Conflict on creating account with customer Id: '%d'", customerId));
+//    }
+
+
+
     @Override
     public Account createAccount(Integer customerId) throws AccountConflictException {
         Account account = new Account.Builder()

@@ -16,14 +16,15 @@ public class AccountServiceMockitoTest {
     @Test
     void createAccount() throws AccountConflictException {
         final InMemAccountRepository repositoryMock = mock(InMemAccountRepository.class);
+        String test = anyString();
+        System.out.println(test);
 
 
         Account account1 = new Account.Builder()
-                .withId(1)
                 .withCustomerId(1)
-                .withAccountNumber("12345")
-                .withBalance(0D)
-                .withPasswordAccount("1234")
+                .withAccountNumber(anyString())
+                .withBalance(anyDouble())
+                .withPasswordAccount(anyString())
                 .withSecondaryOwnersId(List.of(2, 3))
                 .build();
 
