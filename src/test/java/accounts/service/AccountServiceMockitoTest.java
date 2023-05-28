@@ -5,6 +5,7 @@ import accounts.model.Account;
 import accounts.repository.IAccountRepository;
 import accounts.repository.InMemAccountRepository;
 import org.junit.jupiter.api.Test;
+import utils.INumbersGenerator;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,8 @@ public class AccountServiceMockitoTest {
     @Test
     void createAccount() throws AccountConflictException {
         final InMemAccountRepository repositoryMock = mock(InMemAccountRepository.class);
-        String test = anyString();
+        final INumbersGenerator numbersGeneratorMock = mock(INumbersGenerator.class);
+        int test = anyInt();
         System.out.println(test);
 
 

@@ -70,7 +70,7 @@ public class CustomerWithAccountRepository extends InMemRepository<CustomerWithA
         return Optional.empty();
     }
 
-    //Customer can have several account with one tax id
+    //Primary Customer can have several accounts with one tax id
     @Override
     public List<CustomerWithAccount> findAllCustomerWithAccountThroughTaxId(String customerTaxId) {
         return getAll().stream().filter(customerWithAccount -> customerWithAccount.getCustomer().getTaxId().equals(customerTaxId)).collect(Collectors.toList());

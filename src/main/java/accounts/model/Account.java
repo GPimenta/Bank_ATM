@@ -27,7 +27,7 @@ public class Account implements IdentificationItem {
         this.id = id;
         this.customerId = customerId;
         this.password = IPreconditions.checkLength(password, ACCOUNT_PASSWORD_LENGTH,
-                "The account password can not be less than 4 digits");
+                "The account password must have 4 digits");
         this.accountNumber = IPreconditions.checkLength(accountNumber, ACCOUNT_NUMBER_LENGTH,
                 "The account number can only be 5 digits");
         this.balance = balance;

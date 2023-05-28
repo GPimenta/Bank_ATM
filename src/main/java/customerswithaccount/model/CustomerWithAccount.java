@@ -128,7 +128,7 @@ public class CustomerWithAccount implements IdentificationItem {
 
         }
 
-        public Builder withId(){
+        public Builder withId(Integer id){
             this.id = id;
             return this;
         }

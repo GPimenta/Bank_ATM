@@ -6,10 +6,7 @@ import accounts.repository.IAccountRepository;
 import utils.INumbersGenerator;
 import utils.IPreconditions;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class AccountService implements IAccountService {
 
@@ -26,21 +23,6 @@ public class AccountService implements IAccountService {
     private static String generateAccountPassword() {
         return INumbersGenerator.createString(Account.ACCOUNT_PASSWORD_LENGTH);
     }
-
-//    @Override
-//    public Account createAccount(Integer customerId, INumbersGenerator numbersGenerator) throws AccountConflictException {
-//        Account account = new Account.Builder()
-//                .withCustomerId(customerId)
-//                .withAccountNumber(INumbersGenerator.createString(Account.ACCOUNT_NUMBER_LENGTH))
-//                .withBalance(0D)
-//                .withPasswordAccount(INumbersGenerator.createString(Account.ACCOUNT_PASSWORD_LENGTH))
-//                .build();
-//
-//        return repository.create(account)
-//                .orElseThrow(() -> new AccountConflictException("Conflict on creating account with customer Id: '%d'", customerId));
-//    }
-
-
 
     @Override
     public Account createAccount(Integer customerId) throws AccountConflictException {
@@ -97,18 +79,17 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public void depositAccount(Integer accountId, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidDepositException {
+    public Account depositAccount(Integer accountId, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidDepositException {
         if (amount <= 0) {
             throw new AccountVoidDepositException("Cannot deposit with %.2f", amount);
         }
         Account account = getAccount(accountId);
         account.setBalance(account.getBalance() + amount);
-        repository.update(account);
-
+        return repository.update(account).orElseThrow(() -> new AccountNotFoundException("Account with id %i was not found", accountId));
     }
 
     @Override
-    public void withdrawAccount(Integer accountId, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidWithdrawException, AccountNoFundsException {
+    public Account withdrawAccount(Integer accountId, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidWithdrawException, AccountNoFundsException {
         if (amount <= 0) {
             throw new AccountVoidWithdrawException("Cannot deposit with '%.2f", amount);
         }
@@ -120,15 +101,12 @@ public class AccountService implements IAccountService {
         if (account.getBalance() - amount < 0){
             throw new AccountNoFundsException("Not enough funds to withdraw '%.2f'", amount);
         }
-
         account.setBalance(account.getBalance() - amount);
-
-        repository.update(account);
-
+        return repository.update(account).orElseThrow(() -> new AccountNotFoundException("Account with id %i was not found", accountId));
     }
 
     @Override
-    public void transferMoney(Integer fromAccount, Integer toAccount, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidWithdrawException, AccountNoFundsException, AccountVoidDepositException {
+    public Account transferMoney(Integer fromAccount, Integer toAccount, Double amount) throws AccountConflictException, AccountNotFoundException, AccountVoidWithdrawException, AccountNoFundsException, AccountVoidDepositException {
         Account withdrawFrom = getAccount(fromAccount);
         Account depositTo = getAccount(toAccount);
 
@@ -136,11 +114,11 @@ public class AccountService implements IAccountService {
             throw new AccountConflictException("Cannot transfer money, from AccountId: '%d' to the same AccountId: '%d'", fromAccount, toAccount);
         }
         withdrawAccount(fromAccount, amount);
-        depositAccount(toAccount, amount);
+        return depositAccount(toAccount, amount);
     }
 
     @Override
-    public void addSecondaryOwner(Integer accountId, Integer customerId) throws AccountConflictException, AccountNotFoundException {
+    public Account addSecondaryOwner(Integer accountId, Integer customerId) throws AccountConflictException, AccountNotFoundException {
         Account account = getAccount(accountId);
         List<Integer> secondaryOwners = account.getSecondaryOwnersId();
 
@@ -153,13 +131,13 @@ public class AccountService implements IAccountService {
         if (secondaryOwners.contains(customerId)){
             throw new AccountConflictException("The customer with Id '%d' is already on the secondary Owner list of this account Id '%d'", customerId, accountId);
         }
-        account.getSecondaryOwnersId().add(customerId);
-        repository.update(account);
 
+        account.getSecondaryOwnersId().add(customerId);
+        return repository.update(account).orElseThrow(() -> new AccountNotFoundException("Account with id %i was not found", accountId));
     }
 
     @Override
-    public void deleteSecondaryOwner(Integer accountId, Integer customerId) throws AccountConflictException, AccountNotFoundException {
+    public Account deleteSecondaryOwner(Integer accountId, Integer customerId) throws AccountConflictException, AccountNotFoundException {
         Account account = getAccount(accountId);
         Collection<Integer> secondaryOwners = account.getSecondaryOwnersId();
 
@@ -172,7 +150,8 @@ public class AccountService implements IAccountService {
         if (!secondaryOwners.remove(customerId)){
             throw new AccountNotFoundException("Customer with Id: '%d' not found, on secondaryOwner List", customerId);
         }
+
         account.getSecondaryOwnersId().remove(customerId);
-        repository.update(account);
+        return repository.update(account).orElseThrow(() -> new AccountNotFoundException("Account with id %i was not found", accountId));
     }
 }
