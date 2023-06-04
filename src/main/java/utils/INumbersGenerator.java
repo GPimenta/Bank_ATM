@@ -14,7 +14,7 @@ public interface INumbersGenerator {
             int index = (int) (RANDOM.nextFloat() * ALLNUMBERS.length());
             newPin.append(ALLNUMBERS.charAt(index));
         }
-        System.out.println(newPin.toString());
+//        System.out.println(newPin.toString());
         return newPin.toString();
     }
 

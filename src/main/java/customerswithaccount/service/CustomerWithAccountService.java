@@ -102,11 +102,12 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return repository.create(customerWithAccount).orElseThrow(() -> new CustomerWithAccountConflictException("Conflict on creating customer %s with account number %i, debit card number %i and credit card number %i", name, account.getAccountNumber(),debitCard.getCardNumber(), creditCard.getCardNumber()));
     }
 
-
+    @Override
     public boolean deleteCustomerWithAccount(Integer customerWithAccountId) throws CustomerWithAccountNotFoundException {
         return repository.deleteById(customerWithAccountId);
     }
 
+    @Override
     public CustomerWithAccount addDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException {
         final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
         customerWithAccount.setDebitCard(cardService.createDebitCard(customerWithAccount.getAccount().getId(), customerWithAccount.getCustomer().getId()));
@@ -114,6 +115,7 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return repository.update(customerWithAccount).orElseThrow(() -> new CustomerWithAccountNotFoundException(" Customer with account number %s not found", accountNumber));
     }
 
+    @Override
     public CustomerWithAccount addCreditCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException {
         final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
         customerWithAccount.setCreditCard(cardService.createCreditCard(customerWithAccount.getAccount().getId(), customerWithAccount.getCustomer().getId()));
@@ -122,6 +124,7 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
     }
 
 //Check if the customer already has debit or credit card
+    @Override
     public CustomerWithAccount addCardsToCustomerWithAccount(String accountNumber) throws CardConflictException, CustomerWithAccountNotFoundException {
         final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
         customerWithAccount.setDebitCard(cardService.createDebitCard(customerWithAccount.getAccount().getId(), customerWithAccount.getCustomer().getId()));
@@ -130,21 +133,8 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return repository.update(customerWithAccount).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %s not found", accountNumber));
     }
 
-//    private CustomerWithAccount withdrawMoney(CustomerWithAccount customerWithAccount, Double amount) throws AccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException, CustomerWithAccountNotFoundException {
-//        final Account account = accountService.withdrawAccount(customerWithAccount.getAccount().getId(), amount);
-//        customerWithAccount.setAccount(account);
-//
-//        return repository.update(customerWithAccount).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer %s with account number %s not found", customerWithAccount.getCustomer().getName(), customerWithAccount.getAccount().getAccountNumber()));
-//    }
-//
-//    private CustomerWithAccount depositMoney(CustomerWithAccount customerWithAccount, Double amount) throws AccountConflictException, AccountNotFoundException, CustomerWithAccountNotFoundException, AccountVoidDepositException {
-//        final Account account = accountService.depositAccount(customerWithAccount.getAccount().getId(), amount);
-//        customerWithAccount.setAccount(account);
-//
-//        return repository.update(customerWithAccount).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer %s with account number %s not found", customerWithAccount.getCustomer().getName(), customerWithAccount.getAccount().getAccountNumber()));
-//    }
-
     //Need to return transacation object. But first we need to change the transaction repo and service to give a transaction without a destination account
+    @Override
     public boolean withdrawMoneyWithCard(String cardNumber, String pin, Double amount) throws CustomerWithAccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException, AccountNotFoundException {
          if (cardService.checkCardNumberAndPassword(cardNumber, pin)) {
              accountService.withdrawAccount(findCustomerWithAccountThroughCardNumber(cardNumber).getAccount().getId(), amount);
@@ -154,6 +144,7 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
          }
     }
 
+    @Override
     public boolean depositMoneyWithCard(String cardNumber, String pin, Double amount) throws CustomerWithAccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountConflictException, AccountNotFoundException, AccountVoidDepositException {
         if (cardService.checkCardNumberAndPassword(cardNumber, pin)) {
             accountService.depositAccount(findCustomerWithAccountThroughCardNumber(cardNumber).getAccount().getId(), amount);
@@ -164,6 +155,7 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
     }
 
     //This function can be revamp to add the functions above
+    @Override
     public boolean transferMoneyWithCard (String cardNumber, String pin, String accountNumber, Double amount) throws CustomerWithAccountNotFoundException, AccountNoFundsException, AccountVoidWithdrawException, AccountVoidDepositException, AccountConflictException, AccountNotFoundException, TransactonConflictException {
         if (cardService.checkCardNumberAndPassword(cardNumber, pin)) {
             final Integer fromAccountId = findCustomerWithAccountThroughCardNumber(cardNumber).getAccount().getId();
@@ -178,33 +170,39 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return false;
     }
 
+    @Override
     public boolean addSecondaryOwners(String primaryAccountOwner, String secondaryCustomerTaxIdOwner) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountConflictException, AccountNotFoundException {
         final CustomerWithAccount primaryCustomerWithAccount = findCustomerWithAccountThroughAccountNumber(primaryAccountOwner);
         return accountService.addSecondaryOwner(primaryCustomerWithAccount.getAccount().getId(), customerService.findByTaxId(secondaryCustomerTaxIdOwner).getId()) != null;
     }
 
+    @Override
     public boolean deleteSecondaryOwners(String primaryAccountOwner, String secondaryCustomerTaxIdOwner) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountConflictException, AccountNotFoundException {
         final CustomerWithAccount primaryCustomerWithAccount = findCustomerWithAccountThroughAccountNumber(primaryAccountOwner);
         return accountService.deleteSecondaryOwner(primaryCustomerWithAccount.getAccount().getId(), customerService.findByTaxId(secondaryCustomerTaxIdOwner).getId()) != null;
     }
 
+    @Override
     public CustomerWithAccount findCustomerWithAccountThroughAccountNumber(String accountNumber) throws CustomerWithAccountNotFoundException {
-        return repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %i not found", accountNumber));
+        return repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %s not found", accountNumber));
     }
 
+    @Override
     public List<CustomerWithAccount> findAllCustomerWithAccountThroughTaxId(String customerTaxId) {
         return repository.findAllCustomerWithAccountThroughTaxId(customerTaxId);
     }
 
-//    public CustomerWithAccount findCustomerWithAccountThroughCardNumber(String cardNumber) throws CustomerWithAccountNotFoundException {
-//        return repository.findCustomerWithAccountThroughDebitCard(cardNumber).orElse(repository.findCustomerWithAccountThroughCreditCard(cardNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %s not found", cardNumber)));
-//    }
-
+    @Override
     public CustomerWithAccount findCustomerWithAccountThroughCardNumber(String cardNumber) throws CustomerWithAccountNotFoundException {
         final Optional<CustomerWithAccount> customerWithDebitCard = repository.findCustomerWithAccountThroughDebitCard(cardNumber);
         if (customerWithDebitCard.isEmpty()) {
             return repository.findCustomerWithAccountThroughCreditCard(cardNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %s not found", cardNumber));
         }
         return customerWithDebitCard.get();
+    }
+
+    @Override
+    public void showAllCustomersWithAccount() {
+        repository.getAll().forEach(System.out::println);
     }
 }
