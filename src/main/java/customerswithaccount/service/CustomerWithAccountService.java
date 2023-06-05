@@ -18,6 +18,7 @@ import customerswithaccount.exceptions.CustomerWithAccountNotFoundException;
 import customerswithaccount.model.CustomerWithAccount;
 import customerswithaccount.repository.ICustomerWithAccountRepository;
 import transaction.exceptions.TransactonConflictException;
+import transaction.model.Transaction;
 import transaction.service.ITransactionService;
 import utils.IPreconditions;
 
@@ -120,10 +121,6 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
         return repository.deleteById(customerWithAccount.getId());
     }
 
-//    @Override
-//    public boolean deleteCustomerWithAccount(Integer customerWithAccountId) throws CustomerWithAccountNotFoundException {
-//        return repository.deleteById(customerWithAccountId);
-//    }
 
     @Override
     public CustomerWithAccount addDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException {
@@ -134,11 +131,29 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
     }
 
     @Override
+    public void deleteDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException {
+        final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
+        cardService.deleteCard(customerWithAccount.getDebitCard().getId());
+    }
+
+    @Override
     public CustomerWithAccount addCreditCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException {
         final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
         customerWithAccount.setCreditCard(cardService.createCreditCard(customerWithAccount.getAccount().getId(), customerWithAccount.getCustomer().getId()));
 
         return repository.update(customerWithAccount).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with account number %s not found", accountNumber));
+    }
+
+    @Override
+    public void deleteCreditCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException {
+        final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
+        cardService.deleteCard(customerWithAccount.getCreditCard().getId());
+    }
+    @Override
+    public void deleteAllCards(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException {
+        final CustomerWithAccount customerWithAccount = repository.findCustomerWithAccountThroughAccountNumber(accountNumber).orElseThrow(() -> new CustomerWithAccountNotFoundException("Customer with Account number %s was not found", accountNumber));
+        cardService.deleteCard(customerWithAccount.getDebitCard().getId());
+        cardService.deleteCard(customerWithAccount.getCreditCard().getId());
     }
 
 //Check if the customer already has debit or credit card

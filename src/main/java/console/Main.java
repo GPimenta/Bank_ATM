@@ -1,37 +1,29 @@
 package console;
 
 import accounts.exceptions.*;
-import accounts.repository.IAccountRepository;
 import accounts.repository.InMemAccountRepository;
 import accounts.service.AccountService;
 import accounts.service.IAccountService;
 import cards.exceptions.CardConflictException;
-import cards.repository.ICardRepository;
 import cards.repository.InMemCardRepositoryImpl;
 import cards.service.CardService;
 import cards.service.ICardService;
 import costumers.exceptions.CustomerConflictException;
 import costumers.exceptions.CustomerNotFoundException;
-import costumers.repository.ICustomerRepository;
 import costumers.repository.InMemCustomerRepositoryImpl;
 import costumers.service.CustomerService;
 import costumers.service.ICustomerService;
 import customerswithaccount.exceptions.CustomerWithAccountNotFoundException;
 import customerswithaccount.model.CustomerWithAccount;
 import customerswithaccount.repository.CustomerWithAccountRepository;
-import customerswithaccount.repository.ICustomerWithAccountRepository;
 import customerswithaccount.service.CustomerWithAccountService;
 import customerswithaccount.service.ICustomerWithAccountService;
 import transaction.exceptions.TransactonConflictException;
-import transaction.repository.ITransactionRepository;
 import transaction.repository.InMemTransactionRepository;
 import transaction.service.ITransactionService;
 import transaction.service.TransactionService;
 
-import java.sql.SQLOutput;
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -61,26 +53,39 @@ public class Main {
                             case 2: customerWithAccount = customerWithAccountService.createCustomerWithAccountDebitCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
                             case 3: customerWithAccount = customerWithAccountService.createCustomerWithAccountCreditCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
                             case 4: customerWithAccount = customerWithAccountService.createCustomerWithAccountCards(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
-                            default: System.out.println("Invalid number"); break;
+                            default: invalidNumber(); break;
                         } addMoney();
                             switch (scanner.nextInt()){
                                 case 1: customerWithAccountService.depositMoney(customerWithAccount.getAccount().getId(), addMoneyToAccount(scanner)); break;
                                 case 2: break;
-                                default: System.out.println("Invalid number"); break;
+                                default: invalidNumber(); break;
                             } break;
-                    case 2: deleteAccount(); customerWithAccountService.deleteCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getId()); break;
+                    case 2: deleteAccount(); customerWithAccountService.deleteCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
                     case 3:
                         modifyAccountMenu();
                         switch (scanner.nextInt()) {
                             case 1: accountNumber(); customerWithAccountService.addDebitCardToCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
                             case 2: accountNumber(); customerWithAccountService.addCreditCardToCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
                             case 3: accountNumber(); customerWithAccountService.addCardsToCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
-                            case 4: accountNumber(); break; //DELETE CARD
-                        }
+                            case 4: cardsMenu();
+                                    switch (scanner.nextInt()){
+                                        case 1: accountNumber(); customerWithAccountService.deleteDebitCardToCustomerWithAccount(scanner.nextLine()); break;
+                                        case 2: accountNumber(); customerWithAccountService.deleteCreditCardToCustomerWithAccount(scanner.nextLine()); break;
+                                        case 3: accountNumber(); customerWithAccountService.deleteAllCards(scanner.nextLine()); break;
+                                        default: invalidNumber(); break;
+                                    } break;
+                            case 5: final String[] secondaryOwner = secondaryOwner(scanner);
+                                    secondaryOwnersMenu();
+                                    switch (scanner.nextInt()){
+                                        case 1: customerWithAccountService.addSecondaryOwners(secondaryOwner[0], secondaryOwner[1]); break;
+                                        case 2: customerWithAccountService.deleteSecondaryOwners(secondaryOwner[0], secondaryOwner[1]); break;
+                                    } break;
+                            default: invalidNumber(); break;
+                        } break;
                     case 4: String[] credentials = credentialsCardTransferMoney(scanner); customerWithAccountService.transferMoneyWithCard(credentials[0], credentials[1], credentials[2], Double.parseDouble(credentials[3])); break;
                     case 5: customerWithAccountService.showAllCustomersWithAccount(); break;
                     case 6: end = 1; System.out.println("Exiting Bank"); break;
-                    default: System.out.println("Invalid number"); break;
+                    default: invalidNumber(); break;
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -88,6 +93,10 @@ public class Main {
                 scanner.nextLine();
             }
         }
+    }
+
+    private static void invalidNumber() {
+        System.out.println("Invalid number");
     }
 
     private static void startText(){
@@ -152,8 +161,7 @@ public class Main {
         System.out.println("******\t 2 - Add Credit Card \t******");
         System.out.println("******\t 3 - Add Debit and Credit Cards \t******");
         System.out.println("******\t 4 - Delete Card \t******");
-        System.out.println("******\t 5 - Add Secondary owner \t******");
-        System.out.println("******\t 5 - Delete Secondary owner \t******");
+        System.out.println("******\t 5 - Modify Secondary owner \t******");
     }
 
     //Dont like this solution. Tuplet seems a better approach
@@ -173,6 +181,26 @@ public class Main {
 
     private static void accountNumber(){
         System.out.println("Please provide your account number");
+    }
+
+    private static void secondaryOwnersMenu(){
+        System.out.println("******\t 1 - Add Secondary Owner    \t******");
+        System.out.println("******\t 2 - Delete Secondary Owner \t******");
+    }
+
+    private static String[] secondaryOwner(Scanner scanner){
+        accountNumber();
+        scanner.nextLine();
+        String account = scanner.nextLine();
+        System.out.println("Indicate the taxId of the client you wish be secondary owner");
+        String taxId = scanner.nextLine();
+        return new String[]{account, taxId};
+    }
+
+    private static void cardsMenu(){
+        System.out.println("******\t 1 - Delete DebitCard  \t******");
+        System.out.println("******\t 2 - Delete CreditCard \t******");
+        System.out.println("******\t 2 - Delete all Cards  \t******");
     }
 
 }

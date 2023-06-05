@@ -38,4 +38,7 @@ public interface ICustomerWithAccountService {
     CustomerWithAccount findCustomerWithAccountThroughCardNumber(String cardNumber) throws CustomerWithAccountNotFoundException;
     void showAllCustomersWithAccount();
     void depositMoney(Integer accountId, Double amount) throws AccountVoidDepositException, AccountConflictException, AccountNotFoundException;
+    void deleteDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException;
+    void deleteCreditCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException;
+    void deleteAllCards(String accountNumber) throws CustomerWithAccountNotFoundException, CardNotFoundException;
 }
