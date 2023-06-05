@@ -30,6 +30,7 @@ public class CustomerWithAccountRepository extends InMemRepository<CustomerWithA
 
     @Override
     public boolean deleteById(Integer id) {
+
         return repository.removeIf(customerWithAccount -> customerWithAccount.getId().equals(id));
     }
 

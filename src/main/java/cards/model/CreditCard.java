@@ -33,12 +33,12 @@ public class CreditCard extends Card{
         return Objects.hash(super.hashCode(), cashAdvance);
     }
 
-    @Override
-    public String toString() {
-        return "CreditCard{" +
-                "cashAdvance=" + cashAdvance +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "CreditCard{" +
+//                "cashAdvance=" + cashAdvance +
+//                '}';
+//    }
 
     public Integer getCashAdvance() {
         return cashAdvance;

@@ -3,6 +3,7 @@ package customerswithaccount.service;
 import accounts.exceptions.*;
 import accounts.model.Account;
 import cards.exceptions.CardConflictException;
+import cards.exceptions.CardNotFoundException;
 import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
@@ -23,7 +24,7 @@ public interface ICustomerWithAccountService {
     CustomerWithAccount createCustomerWithAccountDebitCard(String name, String taxId, String email, LocalDate birthday) throws CustomerConflictException, CustomerNotFoundException, AccountConflictException, CardConflictException;
     CustomerWithAccount createCustomerWithAccountCreditCard(String name, String taxId, String email, LocalDate birthday) throws CustomerConflictException, CustomerNotFoundException, AccountConflictException, CardConflictException;
     CustomerWithAccount createCustomerWithAccountCards(String name, String taxId, String email, LocalDate birthday) throws CustomerConflictException, CustomerNotFoundException, AccountConflictException, CardConflictException;
-    boolean deleteCustomerWithAccount(Integer customerWithAccountId) throws CustomerWithAccountNotFoundException;
+    boolean deleteCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountNotFoundException, CardNotFoundException;
     CustomerWithAccount addDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException;
     CustomerWithAccount addCreditCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException;
     CustomerWithAccount addCardsToCustomerWithAccount(String accountNumber) throws CardConflictException, CustomerWithAccountNotFoundException;
@@ -36,4 +37,5 @@ public interface ICustomerWithAccountService {
     List<CustomerWithAccount> findAllCustomerWithAccountThroughTaxId(String customerTaxId);
     CustomerWithAccount findCustomerWithAccountThroughCardNumber(String cardNumber) throws CustomerWithAccountNotFoundException;
     void showAllCustomersWithAccount();
+    void depositMoney(Integer accountId, Double amount) throws AccountVoidDepositException, AccountConflictException, AccountNotFoundException;
 }

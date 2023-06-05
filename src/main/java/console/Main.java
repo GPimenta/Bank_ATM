@@ -17,6 +17,7 @@ import costumers.repository.InMemCustomerRepositoryImpl;
 import costumers.service.CustomerService;
 import costumers.service.ICustomerService;
 import customerswithaccount.exceptions.CustomerWithAccountNotFoundException;
+import customerswithaccount.model.CustomerWithAccount;
 import customerswithaccount.repository.CustomerWithAccountRepository;
 import customerswithaccount.repository.ICustomerWithAccountRepository;
 import customerswithaccount.service.CustomerWithAccountService;
@@ -42,6 +43,7 @@ public class Main {
         ICustomerWithAccountService customerWithAccountService = new CustomerWithAccountService(new CustomerWithAccountRepository(), customerService, accountService, cardService, transactionService);
 
         int end = 0;
+        CustomerWithAccount customerWithAccount = null;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -55,11 +57,17 @@ public class Main {
                         String[] details = customerDetails(scanner);
                         createAccountMenu();
                         switch (scanner.nextInt()) {
-                            case 1: customerWithAccountService.createCustomerWithAccount(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
-                            case 2: customerWithAccountService.createCustomerWithAccountDebitCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
-                            case 3: customerWithAccountService.createCustomerWithAccountCreditCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
-                            case 4: customerWithAccountService.createCustomerWithAccountCards(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
-                        } break;
+                            case 1: customerWithAccount = customerWithAccountService.createCustomerWithAccount(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
+                            case 2: customerWithAccount = customerWithAccountService.createCustomerWithAccountDebitCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
+                            case 3: customerWithAccount = customerWithAccountService.createCustomerWithAccountCreditCard(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
+                            case 4: customerWithAccount = customerWithAccountService.createCustomerWithAccountCards(details[0], details[1], details[2], LocalDate.of(Integer.parseInt(details[3]), Integer.parseInt(details[4]), Integer.parseInt(details[5]))); break;
+                            default: System.out.println("Invalid number"); break;
+                        } addMoney();
+                            switch (scanner.nextInt()){
+                                case 1: customerWithAccountService.depositMoney(customerWithAccount.getAccount().getId(), addMoneyToAccount(scanner)); break;
+                                case 2: break;
+                                default: System.out.println("Invalid number"); break;
+                            } break;
                     case 2: deleteAccount(); customerWithAccountService.deleteCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getId()); break;
                     case 3:
                         modifyAccountMenu();
@@ -69,19 +77,17 @@ public class Main {
                             case 3: accountNumber(); customerWithAccountService.addCardsToCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
                             case 4: accountNumber(); break; //DELETE CARD
                         }
-
                     case 4: String[] credentials = credentialsCardTransferMoney(scanner); customerWithAccountService.transferMoneyWithCard(credentials[0], credentials[1], credentials[2], Double.parseDouble(credentials[3])); break;
                     case 5: customerWithAccountService.showAllCustomersWithAccount(); break;
-                    case 6: end = 1; System.out.println("Exiting Bank");
+                    case 6: end = 1; System.out.println("Exiting Bank"); break;
+                    default: System.out.println("Invalid number"); break;
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                System.out.println("Press enter again please");
+                scanner.nextLine();
             }
-
-
         }
-
-
     }
 
     private static void startText(){
@@ -90,12 +96,12 @@ public class Main {
     }
 
     private static void firstMenu(){
-        System.out.println("\n******\t 1 - Create an Account \t******");
-        System.out.println("******\t 2 - Delete an Account \t******");
-        System.out.println("******\t 3 - Modify an Account \t******");
-        System.out.println("******\t 4 - Enter ATM         \t******");
-        System.out.println("******\t 5 - Check all accounts\t******");
-        System.out.println("******\t 6 - Exit              \t******\n");
+        System.out.println("\n******\t 1 - Create an Account  \t******");
+        System.out.println("******\t 2 - Delete an Account    \t******");
+        System.out.println("******\t 3 - Modify an Account    \t******");
+        System.out.println("******\t 4 - Enter ATM            \t******");
+        System.out.println("******\t 5 - Check all accounts   \t******");
+        System.out.println("******\t 6 - Exit                 \t******\n");
     }
 
     private static void createAccountMenu(){
@@ -103,6 +109,15 @@ public class Main {
         System.out.println("******\t 2 - Account with Debit Card \t******");
         System.out.println("******\t 3 - Account with Credit Card \t******");
         System.out.println("******\t 4 - Account with Debit and Credit Card \t******");
+    }
+
+    private static void addMoney(){
+        System.out.println("******\t 1 - Add Money to your Account         \t******");
+        System.out.println("******\t 2 - Continue without money on Account \t******");
+    }
+    private static Double addMoneyToAccount(Scanner scanner) {
+        System.out.println("How much money do wish to provide");
+        return scanner.nextDouble();
     }
 
     //Dont like this solution. Tuplet seems a better approach

@@ -4,6 +4,8 @@ import accounts.exceptions.*;
 import accounts.model.Account;
 import accounts.service.IAccountService;
 import cards.exceptions.CardConflictException;
+import cards.exceptions.CardNotFoundException;
+import cards.model.Card;
 import cards.model.CreditCard;
 import cards.model.DebitCard;
 import cards.service.ICardService;
@@ -103,9 +105,25 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
     }
 
     @Override
-    public boolean deleteCustomerWithAccount(Integer customerWithAccountId) throws CustomerWithAccountNotFoundException {
-        return repository.deleteById(customerWithAccountId);
+    public boolean deleteCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CustomerNotFoundException, AccountNotFoundException, CardNotFoundException {
+        final CustomerWithAccount customerWithAccount = findCustomerWithAccountThroughAccountNumber(accountNumber);
+        customerService.deleteCustomer(customerWithAccount.getCustomer().getId());
+        accountService.deleteAccount(customerWithAccount.getAccount().getId());
+
+        if (customerWithAccount.getDebitCard() != null) {
+            cardService.deleteCard(customerWithAccount.getDebitCard().getId());
+        }
+        if (customerWithAccount.getCreditCard() != null) {
+            cardService.deleteCard(customerWithAccount.getCreditCard().getId());
+        }
+
+        return repository.deleteById(customerWithAccount.getId());
     }
+
+//    @Override
+//    public boolean deleteCustomerWithAccount(Integer customerWithAccountId) throws CustomerWithAccountNotFoundException {
+//        return repository.deleteById(customerWithAccountId);
+//    }
 
     @Override
     public CustomerWithAccount addDebitCardToCustomerWithAccount(String accountNumber) throws CustomerWithAccountNotFoundException, CardConflictException {
@@ -142,6 +160,11 @@ public class CustomerWithAccountService implements ICustomerWithAccountService {
          } else {
              return false;
          }
+    }
+
+    @Override
+    public void depositMoney(Integer accountId, Double amount) throws AccountVoidDepositException, AccountConflictException, AccountNotFoundException {
+        accountService.depositAccount(accountId, amount);
     }
 
     @Override
