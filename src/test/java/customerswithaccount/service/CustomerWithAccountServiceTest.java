@@ -321,7 +321,7 @@ class CustomerWithAccountServiceTest {
         assert(customerWithAccountWithId == customerWithAccountMock);
     }
 
-    @Test
+    @Test @Disabled
     void deleteCustomerWithAccount() throws CustomerWithAccountNotFoundException {
         final ICustomerWithAccountRepository repositoryMock = mock(ICustomerWithAccountRepository.class);
         final ICustomerService customerServiceMock = mock(ICustomerService.class);

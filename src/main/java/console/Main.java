@@ -69,9 +69,9 @@ public class Main {
                             case 3: accountNumber(); customerWithAccountService.addCardsToCustomerWithAccount(customerWithAccountService.findCustomerWithAccountThroughAccountNumber(scanner.next()).getAccount().getAccountNumber()); break;
                             case 4: cardsMenu();
                                     switch (scanner.nextInt()){
-                                        case 1: accountNumber(); customerWithAccountService.deleteDebitCardToCustomerWithAccount(scanner.nextLine()); break;
-                                        case 2: accountNumber(); customerWithAccountService.deleteCreditCardToCustomerWithAccount(scanner.nextLine()); break;
-                                        case 3: accountNumber(); customerWithAccountService.deleteAllCards(scanner.nextLine()); break;
+                                        case 1: accountNumber(); customerWithAccountService.deleteDebitCardToCustomerWithAccount(scanner.next()); break;
+                                        case 2: accountNumber(); customerWithAccountService.deleteCreditCardToCustomerWithAccount(scanner.next()); break;
+                                        case 3: accountNumber(); customerWithAccountService.deleteAllCards(scanner.next()); break;
                                         default: invalidNumber(); break;
                                     } break;
                             case 5: final String[] secondaryOwner = secondaryOwner(scanner);
@@ -114,9 +114,9 @@ public class Main {
     }
 
     private static void createAccountMenu(){
-        System.out.println("******\t 1 - Add only an Account \t******");
-        System.out.println("******\t 2 - Account with Debit Card \t******");
-        System.out.println("******\t 3 - Account with Credit Card \t******");
+        System.out.println("******\t 1 - Add only an Account                \t******");
+        System.out.println("******\t 2 - Account with Debit Card            \t******");
+        System.out.println("******\t 3 - Account with Credit Card           \t******");
         System.out.println("******\t 4 - Account with Debit and Credit Card \t******");
     }
 
@@ -157,11 +157,11 @@ public class Main {
         System.out.println("Please provide account number to delete");
     }
     private static void modifyAccountMenu(){
-        System.out.println("******\t 1 - Add Debit Card \t******");
-        System.out.println("******\t 2 - Add Credit Card \t******");
+        System.out.println("******\t 1 - Add Debit Card             \t******");
+        System.out.println("******\t 2 - Add Credit Card            \t******");
         System.out.println("******\t 3 - Add Debit and Credit Cards \t******");
-        System.out.println("******\t 4 - Delete Card \t******");
-        System.out.println("******\t 5 - Modify Secondary owner \t******");
+        System.out.println("******\t 4 - Delete Card                \t******");
+        System.out.println("******\t 5 - Modify Secondary owner     \t******");
     }
 
     //Dont like this solution. Tuplet seems a better approach
@@ -200,7 +200,7 @@ public class Main {
     private static void cardsMenu(){
         System.out.println("******\t 1 - Delete DebitCard  \t******");
         System.out.println("******\t 2 - Delete CreditCard \t******");
-        System.out.println("******\t 2 - Delete all Cards  \t******");
+        System.out.println("******\t 3 - Delete all Cards  \t******");
     }
 
 }
